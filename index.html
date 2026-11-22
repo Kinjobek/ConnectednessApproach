@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bog'liqlik yondashuvi — ConnectednessApproach</title>
+<meta name="description" content="Diebold–Yilmaz bog'liqlik yondashuvining brauzerda ishlaydigan versiyasi: VAR, TVP-VAR, chastota va qo'shma spillover o'lchovlari — o'zbek tilida.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap bar-inner">
+    <a class="brand" href="#/">
+      <span class="logo">Σ↔</span>
+      <span>
+        <strong>Bog'liqlik yondashuvi</strong>
+        <small>ConnectednessApproach — brauzer versiyasi</small>
+      </span>
+    </a>
+    <nav>
+      <a href="#/">Bosh sahifa</a>
+      <a href="#/tahlil">Tahlil</a>
+      <a href="#/uslub">Metodologiya</a>
+      <a href="#/haqida">Haqida</a>
+      <a class="btn primary" href="#/tahlil">Tahlilni boshlash</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ================================ BOSH SAHIFA -->
+<section class="page" id="page-home">
+  <section class="hero">
+    <div class="badges">
+      <span class="badge">GitHub Pages sayti</span>
+      <span class="badge">Server kerak emas — hammasi brauzerda</span>
+      <span class="badge">17 ta klassik ma'lumot to'plami</span>
+      <span class="badge">R paketi bilan tasdiqlangan (26/26 test)</span>
+    </div>
+    <h1>Moliya bozorlari <em>bog'liqligini</em> o'lchash platformasi</h1>
+    <p>
+      Bu sayt Diebold–Yilmaz bog'liqlik yondashuvining (Connectedness Approach)
+      brauzerda to'liq ishlaydigan JavaScript implementatsiyasini taqdim etadi.
+      VAR va TVP-VAR modellari asosida vaqt, chastota va qo'shma spillover
+      o'lchovlarini hisoblash mumkin — barchasi sizning brauzeringizda,
+      serverga umuman murojaatsiz. Hisob-kitob dvigateli asl R paketi bilan
+      <b>aniqlik darajasida tasdiqlangan</b>.
+    </p>
+    <div class="actions">
+      <a class="btn primary big" href="#/tahlil">Tahlilni boshlash →</a>
+      <a class="btn big" href="#/uslub">Metodologiya bilan tanishish</a>
+    </div>
+  </section>
+
+  <h2 class="section-title">Nimalarni hisoblash mumkin?</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3>📈 Vaqt sohasi</h3>
+      <p style="font-size:13.5px;color:#4b5670">
+        Diebold–Yilmaz (2009, 2012) umumlashtirilgan spillover indeksi: TCI,
+        TO, FROM, NET, NPT, PCI va INFLUENCE o'lchovlari — statik, siljuvchi
+        oyna va TVP-VAR (Koop–Korobilis) rejimlarida.
+      </p>
+    </div>
+    <div class="card">
+      <h3>🌊 Chastota sohasi</h3>
+      <p style="font-size:13.5px;color:#4b5670">
+        Barunik–Krehlik (2018) chastota bog'liqligi: qisqa, o'rta va uzoq
+        muddatli davrlar bo'yicha spilloverlarni ajratish (ABS va WTH
+        ssenariylari).
+      </p>
+    </div>
+    <div class="card">
+      <h3>🔗 Qo'shma yondashuvlar</h3>
+      <p style="font-size:13.5px;color:#4b5670">
+        Lastrapes–Wiesen (2021) qo'shma spillover indeksi va Balcilar et al.
+        (2021) kengaytirilgan qo'shma yondashuvi.
+      </p>
+    </div>
+  </div>
+
+  <h2 class="section-title">Ma'lumot to'plamlari</h2>
+  <p style="color:#66708a;margin-top:-6px;font-size:14px">
+    R paketi bilan kelgan klassik to'plamlar — o'z CSV ma'lumotingizni ham
+    yuklash mumkin.
+  </p>
+  <div class="ds-grid" id="dsGrid"></div>
+</section>
+
+<!-- ================================ TAHLIL FORMASI -->
+<section class="page" id="page-tahlil">
+  <div style="margin-top:26px">
+    <h1 style="margin:0 0 6px;font-size:28px">Tahlil sozlamalari</h1>
+    <p style="color:#66708a;margin:0 0 20px;font-size:14.5px">
+      Hisob-kitob brauzerda bajariladi — server yo'q, ma'lumot qolmaydi.
+    </p>
+
+    <form id="analysisForm">
+      <div class="card">
+        <h3 style="margin-top:0">1️⃣ Ma'lumot manbasi</h3>
+        <div class="src-tabs">
+          <button type="button" id="tabBuiltin" class="active">📦 Tayyor to'plam</button>
+          <button type="button" id="tabUpload">⬆️ O'z CSV faylim</button>
+        </div>
+        <input type="hidden" name="source" id="srcField" value="builtin">
+        <div id="srcBuiltin">
+          <label class="fld">Ma'lumot to'plami</label>
+          <select id="datasetSel" size="8" style="height:auto">
+            <option value="dy2012" selected>Diebold–Yilmaz (2012) — 4 aktiv sinfi (dy2012)</option>
+            <option value="dy2009">Diebold–Yilmaz (2009) — 19 bozor (dy2009)</option>
+            <option value="acg2020">Antonakakis et al. (2020) — valyutalar (acg2020)</option>
+            <option value="cg2021">Chatziantoniou–Gabauer (2021) — EMU obligatsiyalari (cg2021)</option>
+            <option value="lw2021">Lastrapes–Wiesen (2021) — 9 sektor (lw2021)</option>
+            <option value="bgu2021">Balcilar et al. (2021) — tovarlar (bgu2021)</option>
+            <option value="g2020">Gabauer (2020) — valyutalar (g2020)</option>
+            <option value="jcggh2022">Cunado et al. (2022) — metallar (jcggh2022)</option>
+            <option value="gg2018">Gabauer–Gupta (2018) — siyosat noaniqligi (gg2018)</option>
+            <option value="cgs2021">Chatziantoniou et al. (2021) — valyuta svoplari (cgs2021)</option>
+            <option value="gcat2022">Chatziantoniou et al. (2022) — yashil aktivlar (gcat2022)</option>
+            <option value="cgs2022">Chatziantoniou et al. (2022) — ISDA svoplari (cgs2022)</option>
+            <option value="cegg2022">Chatziantoniou et al. (2022) — neft zarbalari (cegg2022)</option>
+            <option value="cgg2022">Chatziantoniou et al. (2022) — neft eksporti (cgg2022)</option>
+            <option value="aaacgo2022">Adekoya et al. (2022) — Brent va sektorlar (aaacgo2022)</option>
+            <option value="gghm2022">Gabauer et al. (2022) — AQSH uy narxlari, 52 shtat (gghm2022)</option>
+          </select>
+          <div class="hint">Katta to'plamlarda TVP-VAR o'rniga VAR ishlating.</div>
+        </div>
+        <div id="srcUpload" style="display:none">
+          <label class="fld">CSV fayl</label>
+          <input type="file" id="csvfile" accept=".csv">
+          <div class="hint">
+            Format: birinchi ustun — sana, qolganlari — raqamli o'zgaruvchilar.
+            Masalan: <code>date,SP500,R_10Y,DJUBSCOM,USDX</code>. Fayl brauzerdan
+            chiqmaydi.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">2️⃣ Model va yondashuv</h3>
+        <div class="form-grid">
+          <div>
+            <label class="fld">Baholash modeli</label>
+            <select id="modelSel">
+              <option value="VAR">VAR (klassik OLS)</option>
+              <option value="TVP-VAR">TVP-VAR (vaqt o'zgaruvchan)</option>
+            </select>
+            <div class="hint">Brauzer versiyasi: VAR va TVP-VAR. QVAR/LASSO/Ridge/Elastic
+              uchun Python yoki R versiyasini ishlating (repo root).</div>
+          </div>
+          <div>
+            <label class="fld">Bog'liqlik yondashuvi</label>
+            <select id="approachSel">
+              <option value="Time">Vaqt sohasi (Diebold–Yilmaz)</option>
+              <option value="Frequency">Chastota sohasi (Barunik–Krehlik)</option>
+              <option value="Joint">Qo'shma spillover (Lastrapes–Wiesen)</option>
+              <option value="Extended Joint">Kengaytirilgan qo'shma (Balcilar et al.)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">3️⃣ Parametrlar</h3>
+        <div class="form-grid">
+          <div>
+            <label class="fld">Lag soni (nlag)</label>
+            <input type="number" id="nlag" value="1" min="1" max="12">
+            <div class="hint">Odatda 1–4.</div>
+          </div>
+          <div>
+            <label class="fld">Bashorat ufqi (nfore)</label>
+            <input type="number" id="nfore" value="10" min="1" max="200">
+            <div class="hint">Chastota yondashuvida avtomatik ≥100 bo'ladi.</div>
+          </div>
+          <div>
+            <label class="fld">Siljuvchi oyna (ixtiyoriy)</label>
+            <input type="number" id="windowSize" placeholder="masalan: 200 (bo'sh = to'liq namuna)">
+            <div class="hint">VAR bilan dinamik TCI olish uchun. TVP-VAR bilan kerak emas.</div>
+          </div>
+          <div class="check">
+            <input type="checkbox" id="corrCheck">
+            <label for="corrCheck">TCI ni tuzatish (cTCI: k/(k−1))</label>
+          </div>
+        </div>
+        <div class="form-grid" style="margin-top:8px">
+          <div class="check">
+            <input type="checkbox" id="genCheck" checked disabled>
+            <label>Umumlashtirilgan FEVD (Pesaran–Shin) — DY (2012) uslubi</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="tvpCard" style="display:none">
+        <h3 style="margin-top:0">TVP-VAR sozlamalari</h3>
+        <div class="form-grid">
+          <div>
+            <label class="fld">Prior</label>
+            <select id="tvpPrior">
+              <option value="BayesPrior">Bayes prior (trening namunasi)</option>
+              <option value="MinnesotaPrior">Minnesota prior</option>
+              <option value="UninformativePrior">Ma'lumotsiz prior</option>
+            </select>
+          </div>
+          <div>
+            <label class="fld">Minnesota gamma</label>
+            <input type="number" id="gamma" value="0.1" step="0.01">
+          </div>
+          <div>
+            <label class="fld">kappa1 (beta uchun)</label>
+            <input type="number" id="kappa1" value="0.99" step="0.005" min="0.01" max="0.999">
+          </div>
+          <div>
+            <label class="fld">kappa2 (Sigma uchun)</label>
+            <input type="number" id="kappa2" value="0.99" step="0.005" min="0.01" max="0.999">
+            <div class="hint">Koop–Korobilis (2014): 0.99 — odatiy, 0.96 — moslashuvchan.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="freqCard" style="display:none">
+        <h3 style="margin-top:0">Chastota yondashuvi sozlamalari</h3>
+        <div class="form-grid">
+          <div>
+            <label class="fld">Chastota bo'linishi</label>
+            <select id="bandSel">
+              <option value="pi2">π → π/2 → 0 (1–2 va 2+ kunlik davrlar)</option>
+              <option value="pi4">π → π/4 → 0 (1–4 va 4+ kunlik)</option>
+              <option value="pi8">π → π/8 → 0 (1–8 va 8+ kunlik)</option>
+              <option value="pi24">π → π/2 → π/4 → 0 (uch davr)</option>
+            </select>
+          </div>
+          <div>
+            <label class="fld">Ssenariy</label>
+            <select id="scenarioSel">
+              <option value="ABS">ABS — mutlaq chastota bog'liqligi</option>
+              <option value="WTH">WTH — butun spektrga nisbatan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px;display:flex;gap:12px;align-items:center">
+        <button type="submit" class="btn primary big" id="submitBtn">⚡ Hisoblash (brauzerda)</button>
+        <span style="color:#98a1bd;font-size:13px" id="calcNote">
+          Kichik to'plamlar bir necha soniyada tayyor bo'ladi.</span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ================================ NATIJALAR -->
+<section class="page" id="page-natija">
+  <div class="crumb"><a href="#/tahlil">← Yangi tahlil</a></div>
+  <div class="res-head">
+    <div>
+      <h2>📊 Tahlil natijalari</h2>
+      <div class="hint">Barcha hisob-kitoblar brauzerda bajarildi — natijalar faqat sizda.</div>
+    </div>
+  </div>
+  <div class="chips" id="resParams"></div>
+  <div class="stats" id="resStats"></div>
+
+  <div class="card" id="resNet" style="margin-top:18px">
+    <h3 style="margin-top:0;font-size:16px">Oxirgi nuqtadagi sof yo'nalish (NET)</h3>
+    <p style="font-size:13px;color:#66708a;margin:4px 0 10px">
+      Musbat — o'zgaruvchi boshqalarga ko'proq uzatadi, manfiy — ko'proq qabul qiladi.
+    </p>
+    <div class="chips" style="margin:0"></div>
+  </div>
+
+  <div id="resTables"></div>
+
+  <div class="card plot-card" id="cardTCI">
+    <h3>📈 Umumiy bog'liqlik indeksi (TCI)</h3>
+    <canvas id="chartTCI"></canvas>
+  </div>
+  <div class="card plot-card" id="cardNET">
+    <h3>↔️ Sof yo'nalishli spilloverlar (NET)</h3>
+    <canvas id="chartNET"></canvas>
+  </div>
+  <div class="card plot-card" id="cardTOFROM">
+    <h3>📤 Uzatilgan (TO) va 📥 qabul qilingan (FROM) spilloverlar</h3>
+    <div class="grid2">
+      <div><h4 style="margin:0 0 6px;font-size:13px;color:#47506b">TO — uzatilgan</h4><canvas id="chartTO"></canvas></div>
+      <div><h4 style="margin:0 0 6px;font-size:13px;color:#47506b">FROM — qabul qilingan</h4><canvas id="chartFROM"></canvas></div>
+    </div>
+  </div>
+  <div class="card plot-card" id="cardNPT">
+    <h3>🔢 Juftlik bo'yicha sof yo'nalishlar soni (NPT)</h3>
+    <canvas id="chartNPT"></canvas>
+  </div>
+  <div class="card plot-card" id="cardNetwork">
+    <h3>🕸️ O'rtacha bog'liqlik to'ri</h3>
+    <p style="font-size:12.5px;color:#66708a;margin:4px 0 6px">
+      Tugun o'lchami — TO, rangi — NET (qizil: sof uzatuvchi, yashil: sof qabulqiluvchi),
+      strelkalar — eng kuchli yo'nalish.
+    </p>
+    <canvas id="chartNetwork" style="max-width:680px"></canvas>
+  </div>
+
+  <div style="margin-top:26px;display:flex;gap:12px">
+    <a class="btn" href="#/tahlil">↩️ Yangi tahlil</a>
+    <a class="btn" href="#/uslub">📚 Metodologiya</a>
+  </div>
+</section>
+
+<!-- ================================ METODOLOGIYA -->
+<section class="page" id="page-uslub">
+  <div class="doc" style="margin-top:26px">
+    <h1>Bog'liqlik yondashuvi: metodologiya</h1>
+    <p>Saytda ishlatilgan metodlarning qisqacha matematik bayoni.</p>
+
+    <h2>1. Umumiy g'oya</h2>
+    <p>
+      Diebold–Yilmaz yondashuvi moliya bozorlari o'rtasidagi <b>spillover</b>
+      (o'zaro ta'sir) kuchini o'lchaydi. Asosiy vosita — prognoz xatosi
+      dispersiyasining dekompozitsiyasi (FEVD): agar i-aktivning prognoz
+      xatosi dispersiyasining bir qismi j-aktivdagi shoklardan kelib chiqsa,
+      bu j→i spillover deyiladi.
+    </p>
+    <div class="formula">
+      x_t = A₁x_{t−1} + … + A_p x_{t−p} + ε_t,&nbsp;&nbsp;&nbsp; ε_t ~ (0, Σ)
+    </div>
+    <p>
+      VAR(p) modeli baholanadi, so'ng VMA (Wold) ko'rinishiga o'tiladi:
+      Ψ_h — impulslar matritsasi. Umumlashtirilgan FEVD (Pesaran–Shin, 1998):
+    </p>
+    <div class="formula">
+      θ_{ij}(H) = σ⁻²_jj · Σ_{h=0}^{H−1} (e'_i Ψ_h Σ e_j)² / Σ_{h=0}^{H−1} (e'_i Ψ_h Σ Ψ'_h e_i)
+    </div>
+
+    <h2>2. Bog'liqlik jadvali va o'lchovlar</h2>
+    <div class="formula">
+      TO_j = Σ_{i≠j} θ_{ij}  — j dan boshqalarga uzatilgan<br>
+      FROM_i = Σ_{j≠i} θ_{ij}  — i ga boshqalardan qabul qilingan<br>
+      NET_i = TO_i − FROM_i<br>
+      TCI = (1/k) Σ_j TO_j  — umumiy bog'liqlik indeksi<br>
+      cTCI = TCI · k/(k−1)  — tuzatilgan TCI<br>
+      PCI_{ij} = 200(θ_{ij}+θ_{ji}) / (θ_{ii}+θ_{ij}+θ_{ji}+θ_{jj})  — juftlik indeksi<br>
+      NPT_i = #{j: θ_{ij} &lt; θ_{ji}}  — i qabulqiluvchi bo'lgan juftliklar soni
+    </div>
+
+    <h2>3. Dinamik bog'liqlik</h2>
+    <ul>
+      <li><b>Siljuvchi oyna</b> — kuzatuvlar bo'ylab VAR qayta baholanadi;</li>
+      <li><b>TVP-VAR</b> (Koop–Korobilis, 2014) — koeffitsientlar vaqt bo'ylab
+        silliq o'zgaradi: Kalman filtri + eshitish omillari (kappa1, kappa2);
+        priors: Bayes (trening namunasi OLS), Minnesota, ma'lumotsiz.</li>
+    </ul>
+
+    <h2>4. Chastota bo'yicha bog'liqlik (Barunik–Krehlik, 2018)</h2>
+    <p>
+      Impuls-javoblar Furye transformatsiyasi bilan chastota domeniga o'tkaziladi.
+      Spektr [0, π] oralig'iga bo'linadi (masalan π/2 da: 1–2 kunlik qisqa va
+      2+ kunlik uzun davrlar). Har bir davr uchun alohida TCI, TO, FROM
+      hisoblanadi — ABS (mutlaq) yoki WTH (nisbiy) ssenariyda.
+    </p>
+
+    <h2>5. Qo'shma yondashuvlar</h2>
+    <p>
+      <b>Lastrapes–Wiesen (2021)</b> qo'shma spillover indeksi — bitta
+      o'zgaruvchi chiqarilganda qolganlarning birgalikdagi hissasi.
+      <b>Balcilar et al. (2021)</b> kengaytirilgan versiya — juftliklar bo'yicha
+      to'liq jadval bilan.
+    </p>
+
+    <h2>6. Aniqlik kafolati</h2>
+    <p>
+      Ushbu saytning JavaScript dvigateli asl R paketi natijalari bilan
+      solishtirilgan: <b>26/26 test</b> (VAR, TVP-VAR — uch xil prior, FEVD vaqt
+      va chastota, barcha o'lchovlar, 4 yondashuv) — maksimal nisbiy xato ~10⁻¹².
+      Qo'shimcha modellar (QVAR, LASSO/Ridge/Elastic Net) repodagi Python
+      versiyasida mavjud.
+    </p>
+
+    <h2>Asosiy adabiyotlar</h2>
+    <div class="ref">Diebold, F. X., & Yilmaz, K. (2009). Measuring financial asset return and volatility spillovers. <i>The Economic Journal</i>, 119(534), 158–171.</div>
+    <div class="ref">Diebold, F. X., & Yilmaz, K. (2012). Better to give than to receive. <i>International Journal of Forecasting</i>, 28(1), 57–66.</div>
+    <div class="ref">Barunik, J., & Krehlik, T. (2018). Measuring the frequency dynamics of financial connectedness and systemic risk. <i>Journal of Financial Econometrics</i>, 16(2), 271–296.</div>
+    <div class="ref">Antonakakis, N., Chatziantoniou, I., & Gabauer, D. (2020). Refined measures of dynamic connectedness based on TVP-VAR. <i>JRFM</i>, 13(4), 84.</div>
+    <div class="ref">Koop, G., & Korobilis, D. (2014). A new index of financial conditions. <i>European Economic Review</i>, 71, 101–116.</div>
+    <div class="ref">Lastrapes, W. D., & Wiesen, T. F. (2021). The joint spillover index. <i>Economic Modelling</i>, 94, 681–691.</div>
+    <div class="ref">Balcilar, M., Gabauer, D., & Umar, Z. (2021). Crude Oil futures contracts and commodity markets. <i>Resources Policy</i>, 73, 102219.</div>
+  </div>
+</section>
+
+<!-- ================================ HAQIDA -->
+<section class="page" id="page-haqida">
+  <div class="doc" style="margin-top:26px">
+    <h1>Loyiha haqida</h1>
+    <p>
+      Bu GitHub Pages sayti <b>ConnectednessApproach</b> R paketining
+      (David Gabauer, 2022) JavaScript porti asosida yaratilgan va o'zbek
+      tilida ishlaydi. Repo tarkibi:
+    </p>
+    <div class="formula">
+    📁 repozitoriy/
+     ├── docs/            ← shu sayt (GitHub Pages) — JS dvigatel + UI + data
+     │   ├── index.html
+     │   ├── js/engine.js     — bog'liqlik dvigateli (R porti, 26/26 test ✅)
+     │   ├── js/charts.js     — canvas grafiklar
+     │   └── js/app.js        — ilova mantiqi
+     ├── R/, man/, data/  ← asl R paketi (o'zgarmagan)
+     └── README.md
+    </div>
+    <p>
+      Reponing asosiy (main) branchida Python porti, Flask ilovasi va
+      validatsiya skriptlari ham mavjud (tinch joylashgan).
+    </p>
+
+    <h2>Litsenziya</h2>
+    <p>
+      Asl R paketi va bu sayt <b>GPL-3</b> litsenziyasi asosida. Natijalardan
+      ilmiy ishlarda foydalanganda asl paket va metodika maqolalariga iqtibos
+      keltiring:
+    </p>
+    <div class="ref">
+      Gabauer, D. (2022). ConnectednessApproach: R package version 1.0.0.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p><strong>ConnectednessApproach</strong> — Diebold–Yilmaz bog'liqlik
+    yondashuvi. Asl R paketi: David Gabauer (2022), GPL-3.</p>
+    <p>Hisob-kitoblar brauzeringizda bajariladi — hech qanday ma'lumot yuborilmaydi.</p>
+  </div>
+</footer>
+
+<script src="js/engine.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
