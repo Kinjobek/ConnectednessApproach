@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Bosh sahifa{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="badges">
+    <span class="badge">Python porti</span>
+    <span class="badge">Diebold–Yilmaz yondashuvi</span>
+    <span class="badge">17 ta klassik ma'lumot to'plami</span>
+    <span class="badge">R paketi bilan tasdiqlangan</span>
+  </div>
+  <h1>Moliya bozorlari <em>bog'liqligini</em> o'lchash platformasi</h1>
+  <p>
+    Bu platforma Diebold–Yilmaz bog'liqlik yondashuvining (Connectedness Approach)
+    to'liq Python implementatsiyasini taqdim etadi. VAR, QVAR, LASSO, Ridge,
+    Elastic Net va TVP-VAR modellari asosida vaqt, chastota, qo'shma va
+    kengaytirilgan qo'shma spillover o'lchovlarini hisoblash mumkin.
+    Barcha hisob-kitoblar asl R paketi (David Gabauer, 2022) bilan
+    <b>aniqlik darajasida tasdiqlangan</b>.
+  </p>
+  <div class="actions">
+    <a class="btn primary big" href="{{ url_for('analysis') }}">Tahlilni boshlash →</a>
+    <a class="btn big" href="{{ url_for('method') }}">Metodologiya bilan tanishish</a>
+  </div>
+</section>
+
+<h2 class="section-title">Nimalarni hisoblash mumkin?</h2>
+<div class="grid3">
+  <div class="card">
+    <h3>📈 Vaqt sohasi</h3>
+    <p style="font-size:13.5px;color:#4b5670">
+      Diebold–Yilmaz (2009, 2012) umumlashtirilgan spillover indeksi:
+      TCI, TO, FROM, NET, NPT, PCI va INFLUENCE o'lchovlari — statik va
+      dinamik (TVP-VAR yoki siljuvchi oyna) rejimlarda.
+    </p>
+  </div>
+  <div class="card">
+    <h3>🌊 Chastota sohasi</h3>
+    <p style="font-size:13.5px;color:#4b5670">
+      Barunik–Krehlik (2018) chastota bo'yicha bog'liqlik: qisqa, o'rta va
+      uzoq muddatli davrlar bo'yicha spilloverlarni ajratish (ABS va WTH
+      ssenariylari).
+    </p>
+  </div>
+  <div class="card">
+    <h3>🔗 Qo'shma yondashuvlar</h3>
+    <p style="font-size:13.5px;color:#4b5670">
+      Lastrapes–Wiesen (2021) qo'shma spillover indeksi va Balcilar et al.
+      (2021) kengaytirilgan qo'shma yondashuvi — bir nechta shokning bir
+      vaqtdagi ta'sirini o'lchash.
+    </p>
+  </div>
+</div>
+
+<h2 class="section-title">Ma'lumot to'plamlari</h2>
+<p style="color:#66708a;margin-top:-6px;font-size:14px">
+  R paketi bilan birga kelgan klassik ma'lumot to'plamlari — o'z ma'lumotingizni
+  yuklash imkoniyati ham bor. Har bir to'plam tegishli ilmiy maqola replikatsiyasi uchun xizmat qiladi.
+</p>
+<div class="ds-grid">
+  {% for d in datasets %}
+  <div class="ds-card">
+    <h3>{{ d.title }}</h3>
+    <div class="meta">
+      <span><b>{{ d.shape }}</b> kuzatuv</span>
+      <span>📅 {{ d.period }}</span>
+    </div>
+    <p>{{ d.desc }}</p>
+    <a class="go" href="{{ url_for('analysis') }}?dataset={{ d.name }}">Shu to'plamni tahlil qilish →</a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

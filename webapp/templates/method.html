@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Metodologiya{% endblock %}
+{% block content %}
+<div class="doc" style="margin-top:26px">
+  <h1>Bog'liqlik yondashuvi: metodologiya</h1>
+  <p>
+    Bu sahifada platformada ishlatilgan metodlarning qisqacha matematik bayoni
+    keltiriladi. To'liq rasmiy bayonlar uchun quyidagi adabiyotlarga murojaat qiling.
+  </p>
+
+  <h2>1. Umumiy g'oya</h2>
+  <p>
+    Diebold–Yilmaz yondashuvi moliya bozorlari o'rtasidagi <b>spillover</b>
+    (o'zaro ta'sir) kuchini o'lchaydi. Asosiy vosita — prognoz xatosi
+    dispersiyasining dekompozitsiyasi (FEVD): agar i-aktivning prognoz
+    xatosi dispersiyasining bir qismi j-aktivdagi shoklardan kelib chiqsa,
+    bu j→i spillover deyiladi.
+  </p>
+  <div class="formula">
+    x_t = A₁x_{t−1} + … + A_p x_{t−p} + ε_t,&nbsp;&nbsp;&nbsp; ε_t ~ (0, Σ)
+  </div>
+  <p>
+    VAR(p) modeli baholanadi, so'ng VMA (Wold) ko'rinishiga o'tiladi:
+    Ψ_h — impulslar matritsasi. Umumlashtirilgan FEVD (Pesaran–Shin, 1998):
+  </p>
+  <div class="formula">
+    θ_{ij}(H) = σ⁻²_jj · Σ_{h=0}^{H−1} (e'_i Ψ_h Σ e_j)² / Σ_{h=0}^{H−1} (e'_i Ψ_h Σ Ψ'_h e_i)
+  </div>
+  <p>
+    θ_{ij} — j-shokning i-aktiv prognoz xatosiga hissasi. Qatorlar yig'indisi
+    1 ga teng (bu portda R paketi bilan bir xil normalizatsiya ishlatilgan).
+  </p>
+
+  <h2>2. Bog'liqlik jadvali va o'lchovlar</h2>
+  <p>Diebold–Yilmaz (2012) jadvali (foizlarda):</p>
+  <div class="formula">
+    TO_j = Σ_{i≠j} θ_{ij}  — j dan boshqalarga uzatilgan<br>
+    FROM_i = Σ_{j≠i} θ_{ij}  — i ga boshqalardan qabul qilingan<br>
+    NET_i = TO_i − FROM_i<br>
+    TCI = (1/k) Σ_j TO_j  — umumiy bog'liqlik indeksi<br>
+    cTCI = TCI · k/(k−1)  — tuzatilgan TCI (katta tizimlarda qiyoslanadigan)<br>
+    PCI_{ij} = 200(θ_{ij}+θ_{ji}) / (θ_{ii}+θ_{ij}+θ_{ji}+θ_{jj})  — juftlik indeksi<br>
+    NPT_i = #{j: θ_{ij} &lt; θ_{ji}}  — i qabulqiluvchi bo'lgan juftliklar soni
+  </div>
+
+  <h2>3. Dinamik bog'liqlik</h2>
+  <p>Uch usul bilan dinamika olinadi:</p>
+  <ul>
+    <li><b>Siljuvchi oyna</b> — kuzatuvlar bo'ylab VAR qayta baholanadi;</li>
+    <li><b>TVP-VAR</b> (Koop–Korobilis, 2014) — koeffitsientlar vaqt bo'ylab
+    silliq o'zgaradi, Kalman filtri + eshitish omillari (kappa1, kappa2) bilan;</li>
+    <li><b>QVAR</b> (Chatziantoniou et al., 2021) — kvantil regressiya orqali
+    bozorlaraning turli holatlari (dumlar) tahlil qilinadi.</li>
+  </ul>
+
+  <h2>4. Chastota bo'yicha bog'liqlik (Barunik–Krehlik, 2018)</h2>
+  <p>
+    Impuls-javoblar Furye transformatsiyasi orqali chastota domeniga o'tkaziladi.
+    Spektr [0, π] oralig'iga bo'linadi (masalan π/2 nuqtasida: 1–2 kunlik
+    qisqa davr va 2+ kunlik uzun davr). Har bir davr uchun alohida TCI, TO,
+    FROM hisoblanadi:
+  </p>
+  <div class="formula">
+    Γ_i(ω) = Ψ(e^{−iω}) Σ Ψ'(e^{iω}) — spektr FEV<br>
+    TCI^{(d)} = absolyut yoki nisbiy (WTH) ssenariyda hisoblanadi
+  </div>
+
+  <h2>5. Qo'shma yondashuvlar</h2>
+  <p>
+    <b>Lastrapes–Wiesen (2021)</b> qo'shma spillover indeksi — bitta o'zgaruvchi
+    chiqarilganda qolganlarning birgalikdagi hissasi. <b>Balcilar et al. (2021)</b>
+    kengaytirilgan versiya — juftliklar bo'yicha to'liq jadval bilan.
+  </p>
+
+  <h2>6. Model katalogi</h2>
+  <ul>
+    <li><b>VAR</b> — klassik OLS (Sims, 1980; Diebold–Yilmaz, 2009/2012);</li>
+    <li><b>QVAR</b> — kvantil VAR (White et al., 2015; Chatziantoniou et al., 2021);</li>
+    <li><b>LASSO / Ridge / Elastic Net VAR</b> — katta tizimlar uchun jarimaqli
+    regressiyalar (Demirer et al., 2018; Gabauer et al., 2022);</li>
+    <li><b>TVP-VAR</b> — vaqt o'zgaruvchan parametrlar (Koop–Korobilis, 2014;
+    Antonakakis et al., 2020).</li>
+  </ul>
+
+  <h2>7. Aniqlik kafolati</h2>
+  <p>
+    Bu Python portining barcha funksiyalari asl R paketining natijalari bilan
+    solishtirilgan: VAR, QVAR, TVP-VAR, FEVD (vaqt va chastota), barcha
+    bog'liqlik o'lchovlari va to'rtta yondashuv — 31 ta test, maksimal nisbiy
+    xato 10⁻¹² darajasida. LASSO/Ridge/Elastic Net uchun glmnet o'rniga
+    scikit-learn dvigateli ishlatiladi (usul bir xil, tanlangan jarima
+    parametri biroz farq qilishi mumkin).
+  </p>
+
+  <h2>Asosiy adabiyotlar</h2>
+  <div class="ref">Diebold, F. X., & Yilmaz, K. (2009). Measuring financial asset return and volatility spillovers. <i>The Economic Journal</i>, 119(534), 158–171.</div>
+  <div class="ref">Diebold, F. X., & Yilmaz, K. (2012). Better to give than to receive: Predictive directional measurement of volatility spillovers. <i>International Journal of Forecasting</i>, 28(1), 57–66.</div>
+  <div class="ref">Barunik, J., & Krehlik, T. (2018). Measuring the frequency dynamics of financial connectedness and systemic risk. <i>Journal of Financial Econometrics</i>, 16(2), 271–296.</div>
+  <div class="ref">Antonakakis, N., Chatziantoniou, I., & Gabauer, D. (2020). Refined measures of dynamic connectedness based on time-varying parameter vector autoregressions. <i>JRFM</i>, 13(4), 84.</div>
+  <div class="ref">Koop, G., & Korobilis, D. (2014). A new index of financial conditions. <i>European Economic Review</i>, 71, 101–116.</div>
+  <div class="ref">Lastrapes, W. D., & Wiesen, T. F. (2021). The joint spillover index. <i>Economic Modelling</i>, 94, 681–691.</div>
+  <div class="ref">Balcilar, M., Gabauer, D., & Umar, Z. (2021). Crude Oil futures contracts and commodity markets. <i>Resources Policy</i>, 73, 102219.</div>
+</div>
+{% endblock %}

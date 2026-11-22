@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Haqida{% endblock %}
+{% block content %}
+<div class="doc" style="margin-top:26px">
+  <h1>Loyiha haqida</h1>
+  <p>
+    Bu loyiha <b>ConnectednessApproach</b> R paketining (David Gabauer, 2022)
+    to'liq Python porti va uning asosidagi o'zbek tilidagi veb-ilovadan iborat.
+  </p>
+
+  <h2>Tuzilma</h2>
+  <div class="formula">
+  📁 loyiha/
+   ├── connectedness/        ← Python kutubxonasi (R paketi porti)
+   │   ├── core.py          — IRF, FEVD, Wold, getPartition
+   │   ├── models.py        — VAR, QVAR, ElasticNetVAR, TVP-VAR, priors
+   │   ├── measures.py      — ConnectednessTable, Time/Frequency/Joint/ExtJoint
+   │   ├── datasets.py      — 17 ta ma'lumot to'plami
+   │   └── plots.py         — matplotlib grafiklari
+   ├── webapp/              ← Flask veb-ilova (o'zbek tilida)
+   ├── validation/          ← R bilan solishtirish testlari (31/31 ✅)
+   └── target_repo/         ← asl R repozitoriyasi (Git'dan yuklangan)
+  </div>
+
+  <h2>Kutubxonadan dasturda foydalanish</h2>
+  <div class="formula">
+  from connectedness import ConnectednessApproach, load_dataset
+
+  ds = load_dataset("dy2012")             # Diebold–Yilmaz (2012) ma'lumoti
+  dca = ConnectednessApproach(
+      ds["data"],
+      nlag=1, nfore=10,
+      model="TVP-VAR",                    # yoki VAR / QVAR / LASSO / Ridge / Elastic
+      connectedness="Time",              # yoki Frequency / Joint / Extended Joint
+      VAR_config={"TVPVAR": dict(kappa1=0.99, kappa2=0.96,
+                                 prior="MinnesotaPrior", gamma=0.1)})
+  print(dca["TABLE"])                    # bog'liqlik jadvali
+  print(dca["TCI"])                      # dinamik TCI
+  </div>
+
+  <h2>Veb-ilovani ishga tushirish</h2>
+  <div class="formula">
+  pip install flask matplotlib numpy pandas scipy scikit-learn
+  python3 webapp/app.py
+  # → http://127.0.0.1:5000
+  </div>
+
+  <h2>Tasdiqlash (validation)</h2>
+  <p>
+    Portning to'g'riligini tekshirish uchun asl R paketi bilan 31 ta
+    solishtirish testi yozilgan:
+  </p>
+  <div class="formula">
+  # R tomoni:  Rscript validation/reference_run.R
+  # Python:    python3 validation/compare.py
+  # Natija:    31/31 test o'tdi (maks. nisbiy xato ~1e-12)
+  </div>
+
+  <h2>Muallif va litsenziya</h2>
+  <p>
+    Asl R paketi: <b>David Gabauer</b> (2022). ConnectednessApproach, 1.0.0.
+    Litsenziya: <b>GPL-3</b>. Python porti va veb-ilova ham GPL-3 shartlari
+    asosida tarqatiladi. Agar natijalardan ilmiy ishlarda foydalansangiz,
+    asl paket va metodika maqolalariga iqtibos keltiring:
+  </p>
+  <div class="ref">
+    Gabauer, D. (2022). ConnectednessApproach: R package version 1.0.0.
+    <br>Gabauer, D., Gupta, R., Marfatia, H., & Miller, S. (2022).
+    U.S. housing price network connectedness: Evidence from dynamic elastic net,
+    LASSO, and ridge vector autoregressive models.
+  </div>
+</div>
+{% endblock %}

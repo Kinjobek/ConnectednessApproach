@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Natijalar{% endblock %}
+{% block content %}
+
+<div class="crumb">
+  <a href="{{ url_for('index') }}">Bosh sahifa</a> /
+  <a href="{{ url_for('analysis') }}">Tahlil</a> /
+  Natijalar
+</div>
+
+<div class="res-head">
+  <div>
+    <h2>📊 Tahlil natijalari</h2>
+    <div class="paper">{{ ds_paper }}</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:26px;font-weight:800;color:var(--brand)">
+      {{ '%.2f'|format(summary.tci_mean) }}%
+    </div>
+    <div style="font-size:12px;color:#66708a">o'rtacha TCI</div>
+    <div style="font-size:12px;color:#98a1bd;margin-top:6px">
+      ⏱ {{ elapsed }} s · {{ summary.n_t }} nuqta
+    </div>
+  </div>
+</div>
+
+<div class="chips">
+  {% for k, v in params.items() %}
+  <span class="chip"><b>{{ k }}:</b>&nbsp;{{ v }}</span>
+  {% endfor %}
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="v">{{ '%.2f'|format(summary.tci_mean) }}%</div><div class="l">O'rtacha TCI</div></div>
+  <div class="stat"><div class="v">{{ '%.2f'|format(summary.tci_max) }}%</div><div class="l">Maksimal TCI</div></div>
+  <div class="stat"><div class="v">{{ '%.2f'|format(summary.tci_min) }}%</div><div class="l">Minimal TCI</div></div>
+  <div class="stat"><div class="v">{{ '%.2f'|format(summary.tci_last) }}%</div><div class="l">Oxirgi TCI</div></div>
+</div>
+
+{% if net_last %}
+<div class="card" style="margin-top:18px">
+  <h3 style="margin-top:0;font-size:16px">Oxirgi nuqtadagi sof yo'nalish (NET)</h3>
+  <p style="font-size:13px;color:#66708a;margin:4px 0 10px">
+    Musbat qiymat — o'zgaruvchi boshqalarga ko'proq uzatadi (spillover manbai),
+    manfiy — ko'proq qabul qiladi.
+  </p>
+  <div class="chips" style="margin:0">
+    {% for name, val in net_last %}
+    <span class="chip" style="background:{% if val > 0 %}#fdeceb;color:#9d2b1a;border-color:#f6cfcb{% else %}#e8f7f0;color:#14684a;border-color:#c9ecdc{% endif %}">
+      <b>{{ name }}:</b>&nbsp;{{ '%.2f'|format(val) }}%
+    </span>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% for tname, tbl_html in tables %}
+<div class="card plot-card">
+  <h3 style="margin-top:0">🧾 Bog'liqlik jadvali — {{ tname }}</h3>
+  <p style="font-size:12.5px;color:#66708a;margin:4px 0 0">
+    Diogonal — o'z ulushi. <b>TO</b> qatori — o'zgaruvchidan boshqalarga uzatilgan spillover,
+    <b>FROM</b> ustuni — boshqalardan qabul qilingan, <b>NET</b> — farqi,
+    <b>NPT</b> — juftlik bo'yicha sof yo'nalishlar soni. Burchadagi qiymat — cTCI/TCI.
+  </p>
+  <div class="tablewrap">{{ tbl_html | safe }}</div>
+</div>
+{% endfor %}
+
+{% if plots.tci %}
+<div class="card plot-card">
+  <h3>📈 Dinamika grafiklari</h3>
+  {% if freq %}
+    <p style="font-size:13px;color:#66708a;margin:4px 0 6px">Chastota davrlari bo'yicha TCI dinamikasi.</p>
+  {% endif %}
+  <img class="plot" src="{{ url_for('static', filename=plots.tci) }}" alt="TCI dinamikasi">
+</div>
+{% endif %}
+
+{% if plots.net %}
+<div class="card plot-card">
+  <h3>↔️ Sof yo'nalishli spilloverlar (NET)</h3>
+  <img class="plot" src="{{ url_for('static', filename=plots.net) }}" alt="NET">
+</div>
+{% endif %}
+
+{% if plots.tofrom %}
+<div class="card plot-card">
+  <h3>📤 Uzatilgan (TO) va 📥 qabul qilingan (FROM) spilloverlar</h3>
+  <img class="plot" src="{{ url_for('static', filename=plots.tofrom) }}" alt="TO/FROM">
+</div>
+{% endif %}
+
+{% if plots.npt %}
+<div class="card plot-card">
+  <h3>🔢 Juftlik bo'yicha sof yo'nalishlar soni (NPT)</h3>
+  <img class="plot" src="{{ url_for('static', filename=plots.npt) }}" alt="NPT">
+</div>
+{% endif %}
+
+{% if plots.network %}
+<div class="card plot-card">
+  <h3>🕸️ O'rtacha bog'liqlik to'ri</h3>
+  <p style="font-size:12.5px;color:#66708a;margin:4px 0 6px">
+    Tugun o'lchami — TO (uzatilgan spillover), rangi — NET (qizil: sof uzatuvchi,
+    yashil: sof qabulqiluvchi), strelkalar — eng kuchli yo'nalish.
+  </p>
+  <img class="plot" src="{{ url_for('static', filename=plots.network) }}" alt="To' grafigi" style="max-width:640px;display:block;margin:0 auto">
+</div>
+{% endif %}
+
+<div style="margin-top:26px;display:flex;gap:12px">
+  <a class="btn" href="{{ url_for('analysis') }}">↩️ Yangi tahlil</a>
+  <a class="btn" href="{{ url_for('method') }}">📚 Metodologiya</a>
+</div>
+
+{% endblock %}

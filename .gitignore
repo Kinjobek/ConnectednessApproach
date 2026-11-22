@@ -10,3 +10,8 @@
 __packages
 inst/doc
 *.Rmd
+# Python
+__pycache__/
+*.pyc
+webapp/static/plots/
+.DS_Store

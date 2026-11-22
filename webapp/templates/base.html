@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Bog'liqlik yondashuvi{% endblock %} — ConnectednessApproach</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap bar-inner">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="logo">Σ↔</span>
+      <span>
+        <strong>Bog'liqlik yondashuvi</strong>
+        <small>ConnectednessApproach — Python versiyasi</small>
+      </span>
+    </a>
+    <nav>
+      <a href="{{ url_for('index') }}">Bosh sahifa</a>
+      <a href="{{ url_for('analysis') }}">Tahlil</a>
+      <a href="{{ url_for('method') }}">Metodologiya</a>
+      <a href="{{ url_for('about') }}">Haqida</a>
+      <a class="btn primary" href="{{ url_for('analysis') }}">Tahlilni boshlash</a>
+    </nav>
+  </div>
+</header>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="wrap">
+      {% for m in messages %}
+        <div class="flash">⚠️ {{ m }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p><strong>ConnectednessApproach</strong> — Diebold–Yilmaz bog'liqlik
+    yondashuvining Python porti. Asl R paketi: David Gabauer (2022), GPL-3.</p>
+    <p>Bu veb-ilova ilmiy-tadqiqot maqsadlarida. Natijalardan foydalanishda
+    asl maqolalarga havola qiling.</p>
+  </div>
+</footer>
+</body>
+</html>
