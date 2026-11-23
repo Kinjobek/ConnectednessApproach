@@ -225,68 +225,85 @@
     }
     // grafiklar
     const labels = dca.config.dates || [];
-    const thin = (arr, maxN) => {
-      if (arr.length <= maxN) return arr;
-      const step = Math.ceil(arr.length / maxN);
-      return arr.filter((_, i) => i % step === 0 || i === arr.length - 1);
-    };
-    // TCI
-    if (dca.config.approach === "Frequency") {
-      const series = dca.config.periodNames.map((pn, j) => ({
-        name: pn,
-        values: dca.TCI.map(row => row[j])
-      }));
-      Charts.lineChart($("#chartTCI"), { series, labels, height: 300 });
-      $("#cardTCI").querySelector("h3").textContent = "📈 Chastota bo'yicha TCI dinamikasi";
+    const tciSeries = dca.TCI.map(v => Array.isArray(v) ? v[0] : v);
+    const dynamic = tciSeries.length > 1;
+    const freq = dca.config.approach === "Frequency";
+    const names = dca.config.names;
+
+    const get1 = (arr, i) => arr.map(row => Array.isArray(row[i]) ? row[i][0] : row[i]);
+    const avgOf = (arr, i) => { let s = 0, n = 0;
+      for (const row of arr) { s += Array.isArray(row[i]) ? row[i][0] : row[i]; n++; }
+      return s / n; };
+
+    if (dynamic) {
+      // ---- dinamik chiziqli grafiklar
+      if (freq) {
+        Charts.lineChart($("#chartTCI"), {
+          series: dca.config.periodNames.map((pn, j) => ({
+            name: pn, values: dca.TCI.map(row => row[j]) })),
+          labels, height: 310 });
+        $("#cardTCI").querySelector("h3").textContent = "📈 Chastota bo'yicha TCI dinamikasi";
+      } else {
+        Charts.lineChart($("#chartTCI"), {
+          series: [{ name: "TCI", values: tciSeries }],
+          labels, height: 310, fillFirst: true });
+        $("#cardTCI").querySelector("h3").textContent =
+          dca.config.approach === "Joint" ? "📈 Qo'shma spillover indeksi (jTCI)"
+          : "📈 Umumiy bog'liqlik indeksi (TCI)";
+      }
+      // NET
+      const hasNet = dca.NET && dca.NET.length && dca.NET[0].length;
+      $("#cardNET").style.display = hasNet ? "" : "none";
+      if (hasNet) {
+        const order = names.map((_, i2) => i2)
+          .sort((a, b) => Math.abs(avgOf(dca.NET, b)) - Math.abs(avgOf(dca.NET, a)))
+          .slice(0, 8);
+        Charts.lineChart($("#chartNET"), {
+          series: order.map(i2 => ({ name: names[i2], values: get1(dca.NET, i2) })),
+          labels, height: 310, zeroLine: true });
+      }
+      // TO / FROM
+      const hasTO = dca.TO && dca.TO.length && dca.TO[0].length;
+      $("#cardTOFROM").style.display = hasTO ? "" : "none";
+      if (hasTO) {
+        const order = names.map((_, i2) => i2)
+          .sort((a, b) => avgOf(dca.TO, b) - avgOf(dca.TO, a)).slice(0, 6);
+        Charts.lineChart($("#chartTO"), { series: order.map(i2 => ({ name: names[i2], values: get1(dca.TO, i2) })), labels, height: 270 });
+        Charts.lineChart($("#chartFROM"), { series: order.map(i2 => ({ name: names[i2], values: get1(dca.FROM, i2) })), labels, height: 270 });
+      }
+      // NPT
+      const hasNPT = dca.NPT && dca.NPT.length && !Array.isArray(dca.NPT[0][0]);
+      $("#cardNPT").style.display = hasNPT ? "" : "none";
+      if (hasNPT) {
+        const order = names.map((_, i2) => i2)
+          .sort((a, b) => avgOf(dca.NPT, b) - avgOf(dca.NPT, a)).slice(0, 8);
+        Charts.lineChart($("#chartNPT"), {
+          series: order.map(i2 => ({ name: names[i2], values: get1(dca.NPT, i2) })),
+          labels, height: 290 });
+      }
     } else {
-      Charts.lineChart($("#chartTCI"), {
-        series: [{ name: "TCI", values: tci }],
-        labels, height: 300, fillFirst: true, legend: false
-      });
-      $("#cardTCI").querySelector("h3").textContent =
-        dca.config.approach === "Joint" ? "📈 Qo'shma spillover indeksi (jTCI)"
-        : "📈 Umumiy bog'liqlik indeksi (TCI)";
-    }
-    $("#cardTCI").style.display = "";
-    // NET
-    const hasNet = dca.NET && dca.NET.length && dca.NET[0].length;
-    $("#cardNET").style.display = hasNet ? "" : "none";
-    if (hasNet) {
-      const names = dca.config.names;
-      const order = names.map((_, i2) => i2)
-        .sort((a, b) => avgOf(dca.NET, b) - avgOf(dca.NET, a)).slice(0, 12);
-      Charts.lineChart($("#chartNET"), {
-        series: order.map(i2 => ({
-          name: names[i2],
-          values: dca.NET.map(row => Array.isArray(row[i2]) ? row[i2][0] : row[i2])
-        })),
-        labels, height: 300, zeroLine: true
-      });
-    }
-    // TO/FROM
-    const hasTO = dca.TO && dca.TO.length && Array.isArray(dca.TO[0][0] || dca.TO[0]);
-    $("#cardTOFROM").style.display = hasTO ? "" : "none";
-    if (hasTO) {
-      const names = dca.config.names;
-      const pick = i2 => dca.TO.map(row => Array.isArray(row[i2]) ? row[i2][0] : row[i2]);
-      const pickF = i2 => dca.FROM.map(row => Array.isArray(row[i2]) ? row[i2][0] : row[i2]);
-      const order = names.map((_, i2) => i2)
-        .sort((a, b) => avgOf(dca.TO, b) - avgOf(dca.TO, a)).slice(0, 6);
-      Charts.lineChart($("#chartTO"), { series: order.map(i2 => ({ name: names[i2], values: pick(i2) })), labels, height: 260 });
-      Charts.lineChart($("#chartFROM"), { series: order.map(i2 => ({ name: names[i2], values: pickF(i2) })), labels, height: 260 });
-    }
-    // NPT
-    const hasNPT = dca.NPT && dca.NPT.length && !Array.isArray(dca.NPT[0][0]);
-    $("#cardNPT").style.display = hasNPT ? "" : "none";
-    if (hasNPT) {
-      const names = dca.config.names;
-      const order = names.map((_, i2) => i2)
-        .sort((a, b) => avgOf(dca.NPT, b) - avgOf(dca.NPT, a)).slice(0, 12);
-      Charts.lineChart($("#chartNPT"), {
-        series: order.map(i2 => ({ name: names[i2],
-          values: dca.NPT.map(row => Array.isArray(row[i2]) ? row[i2][0] : row[i2]) })),
-        labels, height: 280
-      });
+      // ---- statik natija: ustunli grafiklar (chiziqlar bo'sh chiqmasligi uchun)
+      $("#cardNET").style.display = "none";
+      $("#cardTOFROM").style.display = "none";
+      $("#cardNPT").style.display = "none";
+      const pick = (arr, i2) => {
+        const v = arr[arr.length - 1][i2];
+        return Array.isArray(v) ? v[0] : v;
+      };
+      if (freq) {
+        Charts.bandBarChart($("#chartTCI"), {
+          names: dca.config.periodNames, values: dca.TCI[0] });
+        $("#cardTCI").querySelector("h3").textContent = "📊 Chastota davrlari bo'yicha TCI";
+      } else if (dca.TO && dca.TO.length) {
+        Charts.barChart($("#chartTCI"), {
+          names,
+          TO: names.map((_, i2) => pick(dca.TO, i2)),
+          FROM: names.map((_, i2) => pick(dca.FROM, i2)),
+          NET: names.map((_, i2) => pick(dca.NET, i2)) });
+        $("#cardTCI").querySelector("h3").textContent = "📊 Spilloverlar: TO va FROM";
+      } else {
+        $("#cardTCI").style.display = "none";
+      }
     }
     // To' grafigi — o'rtacha FEVD dan
     let CTavg = null;
@@ -305,7 +322,7 @@
     if (CTavg) {
       const ct = CC.connectednessTable(CTavg, dca.config.names);
       Charts.networkChart($("#chartNetwork"), CTavg, dca.config.names,
-                          ct.TO, ct.NET, 1);
+                          ct.TO, ct.NET);
     }
     location.hash = "#/natija";
     show("page-natija");
