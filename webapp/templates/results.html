@@ -66,9 +66,27 @@
 </div>
 {% endfor %}
 
+{% if plots.bars %}
+<div class="card plot-card">
+  <h3>📊 Spilloverlar: TO va FROM</h3>
+  <p style="font-size:12.5px;color:#66708a;margin:4px 0 6px">
+    Ko'k ustun — boshqalarga uzatilgan spillover (TO), to'q sariq — boshqalardan
+    qabul qilingan (FROM). O'ng tomonda — sof yo'nalish (NET).
+  </p>
+  <img class="plot" src="{{ url_for('static', filename=plots.bars) }}" alt="TO/FROM ustunlari">
+</div>
+{% endif %}
+
+{% if plots.bandtci %}
+<div class="card plot-card">
+  <h3>📊 Chastota davrlari bo'yicha TCI</h3>
+  <img class="plot" src="{{ url_for('static', filename=plots.bandtci) }}" alt="Band TCI" style="max-width:720px;display:block;margin:0 auto">
+</div>
+{% endif %}
+
 {% if plots.tci %}
 <div class="card plot-card">
-  <h3>📈 Dinamika grafiklari</h3>
+  <h3>📈 Dinamik grafiklar</h3>
   {% if freq %}
     <p style="font-size:13px;color:#66708a;margin:4px 0 6px">Chastota davrlari bo'yicha TCI dinamikasi.</p>
   {% endif %}
@@ -101,8 +119,8 @@
 <div class="card plot-card">
   <h3>🕸️ O'rtacha bog'liqlik to'ri</h3>
   <p style="font-size:12.5px;color:#66708a;margin:4px 0 6px">
-    Tugun o'lchami — TO (uzatilgan spillover), rangi — NET (qizil: sof uzatuvchi,
-    yashil: sof qabulqiluvchi), strelkalar — eng kuchli yo'nalish.
+    Tugun o'lchami — uzatilgan spillover (TO) kattaligi. Faqat eng kuchli
+    juftlik qirralari ko'rsatiladi — strelka kuchliroq yo'nalishni bildiradi.
   </p>
   <img class="plot" src="{{ url_for('static', filename=plots.network) }}" alt="To' grafigi" style="max-width:640px;display:block;margin:0 auto">
 </div>

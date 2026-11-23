@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
 from connectedness import (ConnectednessApproach, load_dataset,
                            list_datasets, DATASETS,
                            plot_tci, plot_net, plot_to_from, plot_network,
-                           plot_npt)
+                           plot_npt, plot_bars, plot_band_tci)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PLOT_DIR = os.path.join(BASE, "static", "plots")
@@ -246,21 +246,34 @@ def results():
         try:
             func(*a, path=p, **kw)
             plots[key] = f"plots/{uid}_{fn}.png"
-        except Exception:
-            pass
+        except Exception as ex:
+            app.logger.warning("Grafik xatosi (%s): %s", key, ex)
 
     freq = approach == "Frequency"
-    title_tci = ("Chastota bo'yicha TCI" if freq else
-                 "Umumiy bog'liqlik indeksi (TCI)")
+    tci_arr = np.asarray(dca["TCI"])
+    t_n = int(tci_arr.shape[0])
+    dynamic = t_n > 1
+
     if approach in ("Time", "Frequency"):
-        _png("tci", "tci", plot_tci, dca, title=title_tci)
-        _png("net", "net", plot_net, dca)
-        _png("tofrom", "tofrom", plot_to_from, dca)
-        _png("npt", "npt", plot_npt, dca)
-        _png("network", "netgraph", plot_network, dca)
+        if dynamic:
+            _png("tci", "tci", plot_tci, dca,
+                 title="Chastota bo'yicha TCI" if freq else
+                 "Umumiy bog'liqlik indeksi (TCI)")
+            _png("net", "net", plot_net, dca)
+            _png("tofrom", "tofrom", plot_to_from, dca)
+            _png("npt", "npt", plot_npt, dca)
+        else:
+            _png("bars", "bars", plot_bars, dca)
+            if freq:
+                _png("bandtci", "bandtci", plot_band_tci, dca)
     else:
-        _png("tci", "tci", plot_tci, dca, title="Qo'shma spillover indeksi")
-        _png("net", "net", plot_net, dca)
+        if dynamic:
+            _png("tci", "tci", plot_tci, dca,
+                 title="Qo'shma spillover indeksi (jTCI)")
+            _png("net", "net", plot_net, dca)
+        else:
+            _png("bars", "bars", plot_bars, dca)
+    _png("network", "netgraph", plot_network, dca)
 
     # ---------- 5. Natija ma'lumotlari
     tables = []          # [(nom, TABLE_df)]

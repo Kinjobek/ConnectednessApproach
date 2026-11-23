@@ -20,7 +20,8 @@ from .measures import (ConnectednessTable, TimeConnectedness,
                        FrequencyConnectedness, JointConnectedness,
                        ExtendedJointConnectedness, ConnectednessApproach)
 from .datasets import load_dataset, list_datasets, DATASETS
-from .plots import plot_tci, plot_net, plot_to_from, plot_network, plot_npt
+from .plots import (plot_tci, plot_net, plot_to_from, plot_network, plot_npt,
+                    plot_bars, plot_band_tci)
 
 __version__ = "1.0.0"
 
@@ -32,4 +33,5 @@ __all__ = [
     "JointConnectedness", "ExtendedJointConnectedness", "ConnectednessApproach",
     "load_dataset", "list_datasets", "DATASETS", "__version__",
     "plot_tci", "plot_net", "plot_to_from", "plot_network", "plot_npt",
+    "plot_bars", "plot_band_tci",
 ]
